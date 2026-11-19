@@ -117,10 +117,15 @@ Demo products: Health, Motor, Life, Travel insurance (with multiple plans each).
 ```bash
 cd "insurance-claim-management software/backend"
 # Edit application.properties or set env vars per .env.example
+mvn spring-boot:run
+```
+Backend runs on **http://localhost:8080**.
+
+For a packaged build:
+```bash
 mvn clean package
 java -jar target/insurance-management-system-1.0.0.jar
 ```
-Backend runs on **http://localhost:8080**.
 
 ### Frontend
 ```bash
@@ -129,6 +134,9 @@ npm install
 npm run dev
 ```
 Frontend runs on **http://localhost:5173** and proxies `/api` to `http://localhost:8080`.
+Open **http://localhost:5173/** for the public landing page, then sign in with a demo account.
+
+Production build check: `npm run build` (also run `npx tsc --noEmit` for a strict type check).
 
 ## Swagger / API Documentation
 
@@ -165,11 +173,19 @@ External partner integration (Axis Bank, YBL Bank) via a future integration laye
 
 ## Testing
 
-Backend unit/integration tests are in `backend/src/test`. Frontend tests can be added under `frontend`.
+The project is verified end to end against the SRS:
+
+- **API, RBAC and Swagger:** all three demo logins, structured 401/403 responses, all list endpoints, pagination/sorting/filter validation, OpenAPI groups.
+- **Business flows:** registration → profile completion → purchase → premium payment (`ACTIVE`) → claim → agent review/recommendation → admin decision, with claim history actor tracking.
+- **Edge cases:** failed/partial payments, cancelled/expired policies, duplicate references, coverage limits, customer data isolation, inactive plan/product guards, soft-deleted users.
+- **Frontend:** every admin/agent/customer page renders without console errors, and the main UI flows (admin decision, policy cancellation, agent payment recording, customer registration/purchase/payment/claim, product/plan CRUD, landing-page CTAs) are exercised in a headless browser.
+
+`backend/src/test` is reserved for additional automated tests; the suite above is run against a live backend and MySQL instance.
+
+See `docs/SRS_COMPLIANCE.md` for the acceptance-criteria and exception mapping.
 
 ## Limitations
 
-- MySQL must be installed separately (not bundled).
+- MySQL must be installed and running separately.
 - Document upload is simulated (document references only, no actual file storage).
 - Forgot-password is omitted (no email system per SRS).
-- Frontend type-checking has some loose constraints for build speed; the app builds and runs via Vite.

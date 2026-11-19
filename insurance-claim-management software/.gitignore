@@ -1,0 +1,98 @@
+# =============================================================================
+# Insurance Policy and Claim Management System - .gitignore
+# =============================================================================
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.env.local
+.env.*.local
+
+# --- IDEs ---
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+*~
+
+# --- Java / Maven / Spring Boot ---
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.gradle/
+/build/
+/out/
+/bin/
+/gen/
+/.classpath
+/.project
+/.settings/
+
+# Maven
+/mvnw
+/mvnw.cmd
+/mvnw.bat
+/.mvn/
+
+# --- Node / React / Vite ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+dist/
+dist-ssr/
+*.local
+.vite/
+/frontend/dist
+/.output/
+/.next/
+/coverage/
+/.turbo/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-integrity.log
+/logs
+/log
+
+# Environment files (never commit real secrets)
+.env
+.env.production
+.env.development
+
+# TypeScript
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# Coverage directories used by tools like Istanbul
+coverage/
+*.lcov
+
+# Misc
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+
+# Certificate / keystore files
+*.jks
+*.keystore
+*.p12
+*.pem
+
+# Sensitive config
+secrets/
+*.secret*
