@@ -6,6 +6,8 @@ A full-stack, modular monolithic Insurance Policy and Claim Management System wi
 
 This system manages the complete lifecycle of insurance products, plans, customers, policies, premium payments, and claims. It supports three user roles (Admin, Agent, Customer) with JWT-based role-based access control.
 
+The frontend includes a public marketing landing page at `/` (separate from the authenticated apps), and role-specific dashboards at `/admin`, `/agent`, and `/customer`.
+
 **Architecture:** Modular monolith (backend) + React SPA (frontend). External partner integration (Axis Bank, YBL Bank, etc.) and microservices are documented as future scope only — NOT implemented.
 
 ## Technology Stack
@@ -41,7 +43,7 @@ insurance-claim-management software/
 │   │   ├── customer/           # Customer profiles
 │   │   ├── product/            # Insurance products
 │   │   ├── plan/               # Policy plans
-│   │   ├── policy/             # Policies (purchase, issue, cancel)
+│   │   ├── policy/             # Policies (purchase, issue, cancel, expiry sweep)
 │   │   ├── payment/            # Simulated premium payments
 │   │   ├── claim/              # Claims (submit, review, recommend, decide)
 │   │   ├── history/            # Claim status history
@@ -54,7 +56,9 @@ insurance-claim-management software/
 │   ├── src/
 │   │   ├── components/ui/      # shadcn/ui primitives
 │   │   ├── components/layouts/ # Sidebar, TopNav
+│   │   ├── pages/Landing.tsx   # Public marketing page at /
 │   │   ├── pages/{admin,agent,customer,auth}/
+│   │   ├── pages/shared/       # Role-aware claim/policy detail views
 │   │   ├── services/api.ts     # Axios API layer
 │   │   ├── context/AuthContext.tsx
 │   │   ├── types/index.ts
@@ -76,9 +80,9 @@ insurance-claim-management software/
 - **Java 21** (JDK 21)
 - **Maven 3.x**
 - **Node.js 18+** and **npm**
-- **MySQL 8.x** (required for the backend; not included in this environment)
+- **MySQL 8.x** running locally (default `root` / `root` in `application.properties`; override with environment variables)
 
-> **Note:** MySQL is not installed in this build environment. You must install MySQL locally before running the backend. See "Database Setup" below.
+> **Note:** MySQL must be running before the backend starts. The app creates the `insurance_db` database if it does not exist and applies the schema automatically (`ddl-auto=update`).
 
 ## Database Setup
 
@@ -95,7 +99,7 @@ The application uses `spring.jpa.hibernate.ddl-auto=update` so tables are create
 
 ## Demo Data
 
-On first startup, a `DatabaseSeeder` (CommandLineRunner) inserts demo data if the `users` table is empty:
+On startup, a `DatabaseSeeder` (CommandLineRunner) inserts demo users, products, plans, and customer profiles when they are missing. Seeding is idempotent, so restarting the backend does not duplicate data.
 
 | Role | Email | Password |
 |------|-------|----------|
