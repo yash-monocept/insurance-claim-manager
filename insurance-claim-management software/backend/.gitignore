@@ -1,0 +1,51 @@
+# =============================================================================
+# Backend - Spring Boot / Java / Maven .gitignore
+# =============================================================================
+
+# --- Build output ---
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# --- Maven ---
+/.mvn/
+mvnw
+mvnw.cmd
+mvnw.bat
+
+# --- IDEs ---
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+*~
+
+# --- Logs ---
+*.log
+logs/
+/log
+
+# --- Environment ---
+.env
+.env.local
+.env.*.local
+
+# --- Certificates / keystore ---
+*.jks
+*.keystore
+*.p12
+*.pem
+
+# --- Temp ---
+*.tmp
+*.temp
+*.cache
+
+# --- Sensitive ---
+secrets/
+*.secret*
