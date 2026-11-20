@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { getAllClaims } from "@/services/api"
-import { Search, ClipboardList } from "lucide-react"
+import { Search, ClipboardList, FileText } from "lucide-react"
 
 const STATUS_COLOR: Record<string, string> = {
   SUBMITTED: "bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-300",

@@ -1,9 +1,11 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { useToast } from "@/components/ui/use-toast"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
@@ -58,6 +60,7 @@ export default function AgentClaims() {
                   <TableHead>Policy</TableHead>
                   <TableHead>Amount</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -68,10 +71,13 @@ export default function AgentClaims() {
                     <TableCell>{c.policyNumber}</TableCell>
                     <TableCell>₹{c.claimAmount?.toLocaleString()}</TableCell>
                     <TableCell><Badge className={STATUS_COLOR[c.claimStatus] || "bg-gray-100 dark:bg-gray-800"}>{c.claimStatus.replace(/_/g, " ")}</Badge></TableCell>
+                    <TableCell className="text-right">
+                      <Button size="sm" asChild><Link to={`/agent/claims/${c.id}`}>View</Link></Button>
+                    </TableCell>
                   </TableRow>
                 ))}
                 {(rows || []).length === 0 && (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-gray-500 dark:text-gray-400">No claims found.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-gray-500 dark:text-gray-400">No claims found.</TableCell></TableRow>
                 )}
               </TableBody>
             </Table>

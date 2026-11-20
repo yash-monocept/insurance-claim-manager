@@ -91,7 +91,7 @@ const DialogFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("mt-4 flex flex-row-reverse gap-2", className)}
+    className={cn("mt-4 flex flex-col sm:flex-row-reverse sm:flex-nowrap gap-2", className)}
     {...props}
   />
 ))

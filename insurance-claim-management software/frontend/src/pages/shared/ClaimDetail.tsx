@@ -13,11 +13,12 @@ import { useAuth } from "@/context/AuthContext"
 import {
   decideClaim,
   getClaimById,
+  getClaimDocuments,
   getClaimHistory,
   recommendClaim,
   reviewClaim,
 } from "@/services/api"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, FileText } from "lucide-react"
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -54,6 +55,15 @@ export default function ClaimDetail({ backTo = "/admin/claims" }: { backTo?: str
     queryFn: async () => {
       const res = await getClaimHistory(Number(id), { page: 1, size: 50 })
       return res.data.data.records
+    },
+    enabled: !!id,
+  })
+
+  const { data: documents } = useQuery({
+    queryKey: ["claim-documents", id],
+    queryFn: async () => {
+      const res = await getClaimDocuments(Number(id))
+      return res.data.data
     },
     enabled: !!id,
   })
@@ -222,6 +232,37 @@ export default function ClaimDetail({ backTo = "/admin/claims" }: { backTo?: str
               ))}
               {(history || []).length === 0 && (
                 <p className="text-sm text-gray-500 dark:text-gray-400">No status changes recorded yet.</p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader><CardTitle>Supporting Documents</CardTitle></CardHeader>
+            <CardContent>
+              {(documents || []).length > 0 ? (
+                <div className="space-y-3">
+                  {(documents as any[]).map((doc: any) => (
+                    <div key={doc.id} className="flex items-center justify-between p-3 border rounded-md bg-gray-50 dark:bg-gray-800">
+                      <div className="flex items-center gap-3">
+                        <FileText size={18} className="text-gray-500" />
+                        <div>
+                          <div className="text-sm font-medium">{doc.documentName}</div>
+                          {doc.documentType && (
+                            <div className="text-xs text-gray-500">{doc.documentType}</div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs font-medium">{doc.documentReference}</div>
+                        <div className="text-xs text-gray-400">{doc.uploadedDate}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                  No supporting documents submitted.
+                </div>
               )}
             </CardContent>
           </Card>

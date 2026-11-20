@@ -244,6 +244,14 @@ export interface ClaimStatusHistoryResponse {
   updatedDate: string
 }
 
+export interface ClaimDocumentResponse {
+  id: number
+  documentName: string
+  documentType?: string
+  documentReference?: string
+  uploadedDate: string
+}
+
 // ---------- Auth ----------
 export const authLogin = (data: LoginRequest) =>
   api.post<{ data: AuthResponse }>("/auth/login", data)
@@ -362,6 +370,9 @@ export const getClaimHistory = (claimId: number, params: any) =>
     `/claims/${claimId}/history`,
     { params }
   )
+
+export const getClaimDocuments = (claimId: number) =>
+  api.get<{ data: ClaimDocumentResponse[] }>(`/claims/${claimId}/documents`)
 
 // ---------- Dashboard ----------
 export const getAdminDashboard = () =>

@@ -155,11 +155,11 @@ export default function AgentClaimReview() {
                 <div><strong>Policy:</strong> {c.policyNumber}</div>
                 <div><strong>Amount:</strong> ₹{c.claimAmount?.toLocaleString()}</div>
               </div>
-              <div className="flex flex-wrap gap-2 sm:flex-nowrap">
-                <Button size="sm" onClick={() => recommendMut.mutate({ id: c.id, data: { recommendedStatus: "RECOMMENDED_FOR_APPROVAL", remarks: "Recommended for approval by agent" } })}>
+              <div className="flex flex-col gap-2 w-full">
+                <Button size="sm" className="w-full" onClick={() => recommendMut.mutate({ id: c.id, data: { recommendedStatus: "RECOMMENDED_FOR_APPROVAL", remarks: "Recommended for approval by agent" } })}>
                   Recommend Approval
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => recommendMut.mutate({ id: c.id, data: { recommendedStatus: "RECOMMENDED_FOR_REJECTION", remarks: "Recommended for rejection by agent" } })}>
+                <Button size="sm" variant="outline" className="w-full" onClick={() => recommendMut.mutate({ id: c.id, data: { recommendedStatus: "RECOMMENDED_FOR_REJECTION", remarks: "Recommended for rejection by agent" } })}>
                   Recommend Rejection
                 </Button>
               </div>

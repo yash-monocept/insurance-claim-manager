@@ -137,6 +137,14 @@ export interface PageResponse<T = any> {
   sortDirection?: string
 }
 
+export interface ClaimDocumentResponse {
+  id: number
+  documentName: string
+  documentType?: string
+  documentReference?: string
+  uploadedDate: string
+}
+
 export interface DashboardData {
   [key: string]: any
 }

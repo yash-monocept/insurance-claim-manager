@@ -1,15 +1,15 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useToast } from "@/components/ui/use-toast"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { getAllPolicies } from "@/services/api"
-import { Search, FileText } from "lucide-react"
+import { cancelPolicy, getAllPolicies } from "@/services/api"
+import { Search, FileText, RefreshCw } from "lucide-react"
 
 const STATUS_COLOR: Record<string, string> = {
   PENDING_PAYMENT: "bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-300",
@@ -20,10 +20,20 @@ const STATUS_COLOR: Record<string, string> = {
 
 export default function AgentPolicies() {
   const { toast } = useToast()
+  const queryClient = useQueryClient()
   const [search, setSearch] = useState("")
   const { data, isLoading } = useQuery({
     queryKey: ["agent-policies"],
     queryFn: async () => { const r = await getAllPolicies({ page: 1, size: 100 }); return r.data.data.records },
+  })
+
+  const cancelMut = useMutation({
+    mutationFn: cancelPolicy,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["agent-policies"] })
+      toast({ title: "Policy cancelled", description: "The policy has been cancelled successfully." })
+    },
+    onError: (e: any) => toast({ variant: "destructive", title: "Cancel failed", description: e.response?.data?.message }),
   })
 
   const term = search.trim().toLowerCase()
@@ -56,6 +66,7 @@ export default function AgentPolicies() {
                   <TableHead>Customer</TableHead>
                   <TableHead>Plan</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -65,10 +76,17 @@ export default function AgentPolicies() {
                     <TableCell>{p.customerName}</TableCell>
                     <TableCell>{p.planName}</TableCell>
                     <TableCell><Badge className={STATUS_COLOR[p.policyStatus] || "bg-gray-100 dark:bg-gray-800"}>{p.policyStatus.replace(/_/g, " ")}</Badge></TableCell>
+                    <TableCell className="text-right flex flex-col gap-1 sm:flex-row sm:flex-nowrap">
+                      {p.policyStatus !== "CANCELLED" && p.policyStatus !== "EXPIRED" && (
+                        <Button size="sm" variant="outline" onClick={() => cancelMut.mutate(p.id)}>
+                          <RefreshCw size={16} /> Cancel
+                        </Button>
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))}
                 {(rows || []).length === 0 && (
-                  <TableRow><TableCell colSpan={4} className="text-center py-8 text-gray-500 dark:text-gray-400">No policies found.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-gray-500 dark:text-gray-400">No policies found.</TableCell></TableRow>
                 )}
               </TableBody>
             </Table>

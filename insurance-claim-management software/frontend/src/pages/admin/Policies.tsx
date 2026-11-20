@@ -2,15 +2,15 @@
 
 import React, { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useToast } from "@/components/ui/use-toast"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { getAllPolicies } from "@/services/api"
-import { Search, FileText } from "lucide-react"
+import { cancelPolicy, getAllPolicies } from "@/services/api"
+import { Search, FileText, RefreshCw } from "lucide-react"
 
 const STATUS_COLOR: Record<string, string> = {
   PENDING_PAYMENT: "bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-300",
@@ -21,6 +21,7 @@ const STATUS_COLOR: Record<string, string> = {
 
 export default function AdminPolicies() {
   const { toast } = useToast()
+  const queryClient = useQueryClient()
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("")
   const { data, isLoading } = useQuery({
@@ -29,6 +30,15 @@ export default function AdminPolicies() {
       const res = await getAllPolicies({ page: 1, size: 100, status: statusFilter })
       return res.data.data.records
     },
+  })
+
+  const cancelMut = useMutation({
+    mutationFn: cancelPolicy,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-policies"] })
+      toast({ title: "Policy cancelled", description: "The policy has been cancelled successfully." })
+    },
+    onError: (e: any) => toast({ variant: "destructive", title: "Cancel failed", description: e.response?.data?.message }),
   })
 
   const term = search.trim().toLowerCase()
@@ -82,8 +92,13 @@ export default function AdminPolicies() {
                     <TableCell className="text-sm">{p.productType}</TableCell>
                     <TableCell>₹{p.coverageAmount?.toLocaleString()}</TableCell>
                     <TableCell><Badge className={STATUS_COLOR[p.policyStatus] || "bg-gray-100 dark:bg-gray-800"}>{p.policyStatus.replace(/_/g, " ")}</Badge></TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right flex flex-col gap-1 sm:flex-row sm:flex-nowrap">
                       <Button size="sm" asChild><Link to={`/admin/policies/${p.id}`}>View</Link></Button>
+                      {p.policyStatus !== "CANCELLED" && p.policyStatus !== "EXPIRED" && (
+                        <Button size="sm" variant="outline" onClick={() => cancelMut.mutate(p.id)}>
+                          <RefreshCw size={16} /> Cancel
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
