@@ -3,6 +3,7 @@ package com.insurance.insurancemgmt.claim;
 import com.insurance.insurancemgmt.claim.Claim.ClaimStatus;
 import com.insurance.insurancemgmt.common.dto.ApiResponse;
 import com.insurance.insurancemgmt.common.dto.PageResponse;
+import com.insurance.insurancemgmt.claim.dto.ClaimDocumentResponse;
 import com.insurance.insurancemgmt.claim.dto.ClaimRequest;
 import com.insurance.insurancemgmt.claim.dto.ClaimResponse;
 import com.insurance.insurancemgmt.claim.dto.ClaimReviewRequest;
@@ -82,5 +83,12 @@ public class ClaimController {
     public ResponseEntity<ApiResponse<ClaimResponse>> decideClaim(@PathVariable Long id,
                                                                   @RequestBody @Valid ClaimDecisionRequest request) {
         return ResponseEntity.ok(ApiResponse.success("Claim decision recorded", claimService.decideClaim(id, request)));
+    }
+
+    @GetMapping("/{id}/documents")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT', 'CUSTOMER')")
+    public ResponseEntity<ApiResponse<java.util.List<ClaimDocumentResponse>>> getClaimDocuments(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success("Claim documents retrieved",
+                claimService.getClaimDocuments(id)));
     }
 }

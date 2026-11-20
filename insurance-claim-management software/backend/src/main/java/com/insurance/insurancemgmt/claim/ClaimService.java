@@ -15,6 +15,7 @@ import com.insurance.insurancemgmt.policy.Policy.PolicyStatus;
 import com.insurance.insurancemgmt.policy.PolicyRepository;
 import com.insurance.insurancemgmt.user.User;
 import com.insurance.insurancemgmt.user.UserRepository;
+import com.insurance.insurancemgmt.claim.dto.ClaimDocumentResponse;
 import com.insurance.insurancemgmt.claim.dto.ClaimRequest;
 import com.insurance.insurancemgmt.claim.dto.ClaimResponse;
 import com.insurance.insurancemgmt.claim.dto.ClaimReviewRequest;
@@ -307,5 +308,14 @@ public class ClaimService {
             return null;
         }
         return userRepository.findByEmail(email).orElse(null);
+    }
+
+    public java.util.List<ClaimDocumentResponse> getClaimDocuments(Long claimId) {
+        claimRepository.findById(claimId)
+                .orElseThrow(() -> new ResourceNotFoundException("Claim not found with id: " + claimId));
+        return claimDocumentRepository.findByClaimId(claimId, org.springframework.data.domain.Pageable.unpaged())
+                .getContent().stream()
+                .map(ClaimDocumentResponse::fromEntity)
+                .toList();
     }
 }
